@@ -12,12 +12,12 @@ export const scenarios = data.scenarios as Scenario[];
 export const initialRecords = data.records as RecordDoc[];
 export function sampleBaseline(i: Incident): Assessment {
   const t = (i.symptoms + " " + i.logs).toLowerCase();
-  const topic = /connection|pool/.test(t)
-    ? "database sessions, replica counts, and connection-pool limits"
-    : /redis|oom/.test(t)
-      ? "cache capacity, key growth, and eviction configuration"
-      : /502|gateway/.test(t)
-        ? "upstream health, ports, and readiness checks"
+  const topic = /redis|oom|maxmemory/.test(t)
+    ? "cache capacity, key growth, and eviction configuration"
+    : /502|gateway|upstream/.test(t)
+      ? "upstream health, ports, and readiness checks"
+      : /pool|too many clients|database connection|active_connections/.test(t)
+        ? "database sessions, replica counts, and connection-pool limits"
         : "dependency latency, retry counts, and recent changes";
   return {
     causes: [

@@ -1439,8 +1439,9 @@ function SettingsModal({
             onChange={(e) => setUrl(e.target.value)}
           />
           <small>
-            Leave empty for the local Vite proxy. Hosted previews need a
-            deployed HTTPS backend.
+            Leave empty when this site and its API share a host, including the
+            full Render deployment. For a separate backend, enter its HTTPS
+            origin.
           </small>
         </label>
         <label>
@@ -1491,9 +1492,9 @@ function SettingsModal({
       <div className="connection-help">
         <strong>First time setup</strong>
         <p>
-          Start the backend with your local <code>backend/.env</code>. Set the
-          exact bank ID and key there. ReTrace verifies the existing bank and
-          never creates another.
+          Set the exact Hindsight bank ID and API key in your backend service
+          environment, or in <code>backend/.env</code> when running locally.
+          ReTrace verifies the existing bank and never creates another.
         </p>
       </div>
     </Modal>

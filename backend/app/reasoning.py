@@ -2,7 +2,7 @@ import re
 from .models import Incident, Assessment, Recommendation, Evidence
 
 RULES=[
-    (('connection','pool','too many clients'), 'Database connection pressure is a hypothesis.', ['Inspect active database sessions and pool utilization.', 'Compare pool limits, replica counts, and recent deployment configuration.']),
+    (('pool','too many clients','database connection','active_connections'), 'Database connection pressure is a hypothesis.', ['Inspect active database sessions and pool utilization.', 'Compare pool limits, replica counts, and recent deployment configuration.']),
     (('redis','oom','maxmemory'), 'Cache capacity or eviction configuration may be involved.', ['Inspect memory usage, eviction policy, and key growth.', 'Compare cache configuration with the last known healthy deployment.']),
     (('502','gateway','upstream'), 'Upstream reachability or health checks may be involved.', ['Inspect upstream health and gateway error rates.', 'Compare ports, routes, and readiness checks with the last healthy deployment.']),
     (('timeout','latency','deadline'), 'A dependency or resource bottleneck may be involved.', ['Compare dependency latency and saturation with request volume.', 'Trace slow requests and inspect recent configuration changes.']),

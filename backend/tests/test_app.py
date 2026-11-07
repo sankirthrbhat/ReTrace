@@ -47,6 +47,14 @@ def test_baseline_never_calls_memory(env):
     assert m.reads==0 and m.reflections==0
     assert r['evidence']==[] and r['changes']==[] and r['with_memory']==r['baseline']
 
+def test_gateway_connection_refused_does_not_imply_database_pool_exhaustion(env):
+    c,m,s=env
+    result=c.post('/api/incidents/analyze',json={'incident':SCENARIOS[1]['incident'],'use_memory':False}).json()
+    assert any('gateway' in step['title'].lower() or 'upstream' in step['title'].lower() for step in result['baseline']['steps'])
+    assert not any('database' in text.lower() for text in result['baseline']['causes'])
+    assert not any('database sessions' in step['title'].lower() for step in result['baseline']['steps'])
+    assert m.reads==0
+
 def test_learning_persists_across_requests_and_store_reopen(env):
     c,m,s=env
     assert c.post('/api/incidents/analyze',json=analyze_input()).json()['memory_status']=='empty'

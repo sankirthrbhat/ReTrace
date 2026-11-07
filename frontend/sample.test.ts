@@ -7,6 +7,17 @@ import {
 } from "./sample";
 import type { RecordDoc } from "./types";
 describe("sample workflow (not live Hindsight)", () => {
+  it.each([
+    [0, "database sessions"],
+    [1, "upstream health"],
+    [2, "cache capacity"],
+  ] as const)("routes scenario %i to the relevant current-input checks", (index, expected) => {
+    const result = sampleAnalyze(scenarios[index].incident, [], false);
+    expect(result.baseline.steps[0].title).toContain(expected);
+    if (index !== 0) {
+      expect(result.baseline.steps[0].title).not.toContain("database sessions");
+    }
+  });
   it("keeps baseline independent of all stored sample outcomes", () => {
     const a = sampleAnalyze(scenarios[0].incident, initialRecords, false);
     const b = sampleAnalyze(scenarios[0].incident, [], false);
