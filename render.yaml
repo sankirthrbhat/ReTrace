@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: retrace
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: HINDSIGHT_BASE_URL
+        value: https://api.hindsight.vectorize.io
+      - key: HINDSIGHT_BANK_ID
+        value: ReTrace Incident Memory
+      - key: HINDSIGHT_API_KEY
+        sync: false
+      - key: RETRACE_API_TOKEN
+        generateValue: true
+      - key: RETRACE_ALLOWED_ORIGINS
+        sync: false

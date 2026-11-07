@@ -1,0 +1,54 @@
+{
+  "kind": "offline synthetic source-compatibility evaluation",
+  "not_measured": [
+    "Hindsight retrieval relevance",
+    "LLM reasoning accuracy",
+    "production downtime reduction"
+  ],
+  "sample_size": 6,
+  "passed": 6,
+  "cases": [
+    {
+      "case": "Connection pool exhaustion",
+      "expected_failed_warnings": 1,
+      "actual_failed_warnings": 1,
+      "all_changes_grounded": true,
+      "passed": true
+    },
+    {
+      "case": "Gateway 502 after deployment",
+      "expected_failed_warnings": 1,
+      "actual_failed_warnings": 1,
+      "all_changes_grounded": true,
+      "passed": true
+    },
+    {
+      "case": "Redis memory pressure",
+      "expected_failed_warnings": 1,
+      "actual_failed_warnings": 1,
+      "all_changes_grounded": true,
+      "passed": true
+    },
+    {
+      "case": "A new lesson to remember",
+      "expected_failed_warnings": 0,
+      "actual_failed_warnings": 0,
+      "all_changes_grounded": true,
+      "passed": true
+    },
+    {
+      "case": "Different environment",
+      "expected_failed_warnings": 0,
+      "actual_failed_warnings": 0,
+      "all_changes_grounded": true,
+      "passed": true
+    },
+    {
+      "case": "Different service",
+      "expected_failed_warnings": 0,
+      "actual_failed_warnings": 0,
+      "all_changes_grounded": true,
+      "passed": true
+    }
+  ]
+}

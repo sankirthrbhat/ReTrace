@@ -1,0 +1,161 @@
+{
+  "scenarios": [
+    {
+      "id": "pool",
+      "name": "Connection pool exhaustion",
+      "label": "Recurring incident",
+      "incident": {
+        "title": "Payments latency after replica scale-out",
+        "service": "payments-api",
+        "environment": "production",
+        "severity": "SEV1",
+        "symptoms": "Checkout requests time out. Database connection pool is exhausted after scaling from 4 to 12 replicas.",
+        "logs": "ERROR QueuePool limit of size 20 overflow 10 reached\nFATAL: too many clients already\ncheckout p99=8420ms active_connections=198/200",
+        "context": "Synthetic scenario. A recent deployment increased replica count."
+      }
+    },
+    {
+      "id": "gateway",
+      "name": "Gateway 502 after deployment",
+      "label": "Configuration regression",
+      "incident": {
+        "title": "Gateway returns 502 for catalog requests",
+        "service": "catalog-api",
+        "environment": "production",
+        "severity": "SEV2",
+        "symptoms": "Gateway 502 errors started after deployment. Upstream connection refused on port 8080.",
+        "logs": "upstream connect() failed (111: Connection refused)\nGET /catalog 502 upstream=10.0.1.24:8080",
+        "context": "Synthetic scenario. Container health is green."
+      }
+    },
+    {
+      "id": "redis",
+      "name": "Redis memory pressure",
+      "label": "Capacity incident",
+      "incident": {
+        "title": "Session writes fail during traffic peak",
+        "service": "session-service",
+        "environment": "production",
+        "severity": "SEV2",
+        "symptoms": "Redis memory is at maxmemory. OOM errors prevent session writes and users are signed out.",
+        "logs": "OOM command not allowed when used memory > maxmemory\nused_memory=2147483648 evicted_keys=0",
+        "context": "Synthetic scenario. A bulk import added long-lived cache keys."
+      }
+    },
+    {
+      "id": "learning",
+      "name": "A new lesson to remember",
+      "label": "Learning loop",
+      "incident": {
+        "title": "Inventory requests time out after deployment",
+        "service": "inventory-api",
+        "environment": "production",
+        "severity": "SEV2",
+        "symptoms": "Inventory requests time out after deployment. Dependency client retry storm increases latency.",
+        "logs": "deadline exceeded dependency=warehouse\nretry_attempts=5 timeout_ms=1000",
+        "context": "Synthetic scenario with no pre-seeded resolution. Record your finding, then investigate again."
+      }
+    }
+  ],
+  "records": [
+    {
+      "incident_id": "DEMO-001",
+      "incident": {
+        "title": "Payments latency after replica scale-out",
+        "service": "payments-api",
+        "environment": "production",
+        "severity": "SEV1",
+        "symptoms": "Checkout requests time out. Database connection pool is exhausted after scaling from 4 to 12 replicas.",
+        "logs": "ERROR QueuePool limit of size 20 overflow 10 reached\nFATAL: too many clients already\ncheckout p99=8420ms active_connections=198/200",
+        "context": "Synthetic scenario. A recent deployment increased replica count."
+      },
+      "root_cause": "Replica scale-out multiplied per-process connection limits beyond database capacity.",
+      "attempts": [
+        {
+          "action": "Restart application pods",
+          "outcome": "failed",
+          "explanation": "Connection errors returned within two minutes because pool sizing was unchanged.",
+          "verified": true
+        },
+        {
+          "action": "Correct the total connection budget",
+          "outcome": "succeeded",
+          "explanation": "Reduced per-replica pool size in a controlled test; total connections stayed below database capacity.",
+          "verified": true
+        }
+      ],
+      "lessons": "Budget database connections across replicas, workers, and background jobs.",
+      "confirmed": true,
+      "synthetic": true,
+      "schema_version": "retrace-v1",
+      "recorded_at": "2026-11-04T09:30:00+00:00",
+      "source": "engineer-confirmed"
+    },
+    {
+      "incident_id": "DEMO-002",
+      "incident": {
+        "title": "Gateway returns 502 for catalog requests",
+        "service": "catalog-api",
+        "environment": "production",
+        "severity": "SEV2",
+        "symptoms": "Gateway 502 errors started after deployment. Upstream connection refused on port 8080.",
+        "logs": "upstream connect() failed (111: Connection refused)\nGET /catalog 502 upstream=10.0.1.24:8080",
+        "context": "Synthetic scenario. Container health is green."
+      },
+      "root_cause": "Gateway upstream port remained 8080 while the new container listened on 8000.",
+      "attempts": [
+        {
+          "action": "Increase gateway timeout",
+          "outcome": "failed",
+          "explanation": "Connection refused persisted because no process listened on the configured upstream port.",
+          "verified": true
+        },
+        {
+          "action": "Correct upstream port mapping",
+          "outcome": "succeeded",
+          "explanation": "Staging validation reached the healthy container on port 8000.",
+          "verified": true
+        }
+      ],
+      "lessons": "Validate upstream port mappings and readiness through the actual gateway route.",
+      "confirmed": true,
+      "synthetic": true,
+      "schema_version": "retrace-v1",
+      "recorded_at": "2026-11-05T09:30:00+00:00",
+      "source": "engineer-confirmed"
+    },
+    {
+      "incident_id": "DEMO-003",
+      "incident": {
+        "title": "Session writes fail during traffic peak",
+        "service": "session-service",
+        "environment": "production",
+        "severity": "SEV2",
+        "symptoms": "Redis memory is at maxmemory. OOM errors prevent session writes and users are signed out.",
+        "logs": "OOM command not allowed when used memory > maxmemory\nused_memory=2147483648 evicted_keys=0",
+        "context": "Synthetic scenario. A bulk import added long-lived cache keys."
+      },
+      "root_cause": "Redis noeviction policy and unbounded import keys exhausted available cache memory.",
+      "attempts": [
+        {
+          "action": "Restart Redis",
+          "outcome": "failed",
+          "explanation": "The data set returned at startup and memory pressure remained.",
+          "verified": true
+        },
+        {
+          "action": "Bound import key TTLs and validate eviction policy",
+          "outcome": "succeeded",
+          "explanation": "A staging test of bounded TTLs and an approved eviction policy restored writes.",
+          "verified": true
+        }
+      ],
+      "lessons": "Measure key growth and verify eviction behavior before increasing capacity.",
+      "confirmed": true,
+      "synthetic": true,
+      "schema_version": "retrace-v1",
+      "recorded_at": "2026-11-06T09:30:00+00:00",
+      "source": "engineer-confirmed"
+    }
+  ]
+}

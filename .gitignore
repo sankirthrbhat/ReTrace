@@ -1,0 +1,17 @@
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+*.db
+*.db-*
+dist/
+.pytest_cache/
+artifacts/
+
+*.before-config-fix
