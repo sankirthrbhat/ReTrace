@@ -1,39 +1,70 @@
 # Validation report — November 7, 2026
 
-## Verified in this build environment
+This report separates reviewer-run checks from owner-reported credentialed local results. It does not claim a deployed application has been tested.
 
-- Python 3.12.14; Node 24.22.1; Git 2.51.1.
-- Official `hindsight-client==1.2.0` installed; async method signatures and response fields inspected.
-- `python -m pytest backend/tests -q`: 25 passed, 1 live test skipped in the final run.
-- `npm test`: 6 frontend logic tests passed in the final run.
-- TypeScript validation and production Vite build passed after fixing one modal syntax error.
-- Offline source-compatibility evaluation: 6/6 synthetic cases passed. The three compatible incidents produced their expected failed-outcome warning; an unseen service, a mismatched environment, and a mismatched service did not receive unsupported historical warnings. Every added recommendation referenced provided evidence. See evaluation-results.json.
-- Browser QA: sample investigation, independent comparison display, source-evidence modal, initially empty learning scenario, confirmed sample resolution capture, and a subsequent changed recommendation were observed working.
-- Connection dialog fails visibly when the backend API is unavailable; it does not switch into a falsely connected live mode.
+## Reviewer-run checks
 
-The final test run reproduced 25 backend passes, 6 frontend passes, one intentionally skipped live test, and a successful production build. Starlette emitted one dependency deprecation warning about its current httpx TestClient integration; no test failed.
+Reviewed source commit: `5235492c99d1eddc9e7378415c6cb99da04ef051` from https://github.com/sankirthrbhat/ReTrace.
 
-## Not verified
+| Check | Actual result |
+|---|---|
+| Backend tests, excluding opt-in live test | 25 passed; 1 live test deselected |
+| Frontend tests with Vitest 4.1.12 | 6 passed |
+| TypeScript and Vite production build | Passed |
+| Full npm audit, including development dependencies | 0 reported vulnerabilities |
+| Production-only npm audit | 0 reported vulnerabilities |
+| Offline source-compatibility evaluation | 6/6 synthetic cases passed |
+| Bank-check endpoint inspection | `get_bank_config` used for verification and pre-retain checks |
+| Current Git-tracked files | No private `.env`, database, installed dependencies, or temporary fix backup tracked |
+| Example environment file | Hindsight key left blank |
 
-No Hindsight API key, bank ID environment value, or Windows project files were available in this cloud workspace. Running `scripts/memory_check.py verify` returned `not_configured`. No authenticated external memory operation was performed, and no credits were spent by this build.
+Commands actually run:
 
-Therefore authentication, bank access, real retain/recall source mapping, indexing latency, cross-restart live persistence, and real reflection remain unverified. The live smoke test was intentionally skipped without opt-in. Offline SDK-shaped responses do not prove live behavior.
+```bash
+npm ci
+npm test
+npm run build
+npm audit
+npm audit --omit=dev
+backend/.venv/bin/python -m pytest backend/tests -m 'not live' -q
+backend/.venv/bin/python scripts/evaluate.py
+```
 
-The managed preview runs the frontend; it does not include the ignored Python virtual environment. Full frontend-to-backend browser QA remains pending a local or deployed backend. API behavior was exercised in-process using FastAPI TestClient. Responsive CSS is included, but a resized mobile browser viewport was not exercised here.
+Environment: Python 3.12.14 and Node 24.22.1. Starlette emitted a deprecation warning about its httpx TestClient integration; the tests passed. The six-case evaluation supplies source documents to the downstream compatibility filter. It is not a Hindsight retrieval benchmark.
 
-A static preview can be published separately. It starts in sample mode and is not a deployed Python service. Render and Vercel configuration is supplied, but neither provider was configured or deployed during this build. Docker build/run was not executed here.
+Earlier browser QA observed the labeled local sample investigation, comparison, source-evidence view, resolution capture, later changed recommendation, searchable ledger, and timeline. That sample-mode QA is not a substitute for real memory testing.
+
+## Owner-reported local live verification
+
+The owner reported these results from the Windows project on November 7:
+
+- The private Hindsight key loads from local `backend/.env`.
+- The retired bank profile route produced HTTP 410; both bank checks were changed to `get_bank_config`.
+- Existing-bank access succeeded.
+- The explicit real retain/recall smoke test returned **1 passed**. This test verifies a source document returned through separate SDK client calls.
+- The dashboard connected in **Live backend mode**, with a screenshot showing three retained synthetic resolutions.
+- The owner recorded a synthetic inventory resolution through the dashboard and reported that subsequent recall changed the recommendations.
+
+These credentialed results were reported by the owner; the reviewer did not receive the API key, run those external calls, or observe the local live browser directly. No latency, retrieval-accuracy percentage, production incident, or downtime improvement is asserted.
+
+## Still pending explicit evidence
+
+- Recall after a backend restart using the same incident input and exact service name.
+- Optional Hindsight reflection, if it will be demonstrated.
+- Docker build and hosted frontend/backend end-to-end verification.
+- Judge access to the hosted application, including the app's separate access-token workflow.
+- A resized mobile viewport check on the deployed application.
+- Completed Band AI task and review artifact.
+- Published individual articles/social posts, team video, and final submission links.
+
+The current Dockerfile and Render configuration were inspected, but no Render service was deployed or tested by this review. Render Free uses an ephemeral filesystem: the local SQLite audit can reset while remote Hindsight memory remains separate. A fresh deployment's counters do not inventory the entire remote bank.
+
+## Repeating the live learning demonstration
+
+The default inventory scenario has already been taught. For a fresh before/after recording, edit its service to an unused name such as `inventory-demo-002`, inspect the initial evidence, record a clearly synthetic resolution, and investigate the same input again. Related evidence from other services can still be returned; do not describe that as an empty bank. Keep the exact service name when repeating the request after a restart.
+
+Do not delete memories just to manufacture an empty before-state. Do not splice sample-mode output into a live demonstration. Keep current-incident causes hypothetical and synthetic intervention outcomes labeled as such.
 
 ## Interpretation limits
 
-Test cases use injected memory doubles and real installed SDK response schemas. They verify application contracts and failure handling; they are not evidence of Hindsight retrieval quality. Offline evaluation deliberately supplies source documents to test the downstream filter. It is not a retrieval benchmark. No production data, downtime measurements, customer usage, or percentage improvement claims are available.
-
-## Remaining live acceptance
-
-1. Verify the existing bank with the exact ID and local private key.
-2. Seed the three synthetic documents explicitly; confirm their actual appearance in Hindsight.
-3. Run the opt-in smoke test and retain its real outcome.
-4. Connect the browser to FastAPI and verify the payments comparison.
-5. Capture a new inventory resolution, observe a confirmed write, and recall its source in a new request.
-6. Restart the backend with the same durable database and repeat recall.
-7. If demonstrating reflection, enable it and record its actual result separately from verified facts.
-8. Update this report with commands, sample size, timestamps, and any failures actually observed.
+Offline tests validate application contracts, source grounding, context filtering, retries, and safe failure behavior. The one owner-reported live smoke test verifies one concrete integration case, not general retrieval quality. The local UI learning result demonstrates one synthetic workflow. Neither establishes production readiness or reduced downtime.

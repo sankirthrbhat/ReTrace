@@ -10,6 +10,6 @@ The design rules:
 • Retain confirmed outcomes, not generated guesses.
 • Label unavailable memory honestly.
 
-Code: [INSERT ACTUAL PUBLIC GITHUB URL]
+Code: https://github.com/sankirthrbhat/ReTrace
 
 #AIAgents #Hindsight #AgentMemory

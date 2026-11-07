@@ -7,7 +7,9 @@ Reviewed against the official Python SDK and installed `hindsight-client==1.2.0`
 
 ## Actual SDK surface
 
-The adapter uses `Hindsight(..., api_key=..., timeout=..., max_attempts=1)`, `banks.get_bank_profile`, `aretain`, `arecall`, `documents.get_document`, `areflect`, and `aclose`. The generated bank namespace exposes `get_bank_profile`, not `get_bank`; method signatures and response models were inspected from the installed package.
+The adapter uses `Hindsight(..., api_key=..., timeout=..., max_attempts=1)`, `banks.get_bank_config`, `aretain`, `arecall`, `documents.get_document`, `areflect`, and `aclose`. Both verification and the pre-retain check use the read-only configuration route. The previous profile route returned HTTP 410 during the owner's local testing and was replaced in both locations. SDK 1.2.0 exposes the supported async `get_bank_config(bank_id=...)` method.
+
+Official endpoint references: https://docs.hindsight.vectorize.io/api-reference/get-bank-config/ and https://docs.hindsight.vectorize.io/api-reference/get-bank-profile/.
 
 The retained document is `StoredDocument`: a strict, versioned JSON resolution containing current incident fields, intervention outcomes and verification flags, source, synthetic status, and timestamp. Source IDs are `retrace-<incident_id>`; the tag is `retrace`.
 
@@ -21,7 +23,7 @@ result = await client.aretain(
 )
 ```
 
-The production adapter also supplies metadata and checks `result.success` and `result.var_async`. Only synchronous confirmed retention returns success. The app verifies the existing bank profile before retaining, so a bank typo does not silently create another bank.
+The production adapter also supplies metadata and checks `result.success` and `result.var_async`. Only synchronous confirmed retention returns success. The app reads the existing bank configuration before retaining, so a bank typo does not silently create another bank.
 
 ```python
 response = await client.arecall(
@@ -44,4 +46,4 @@ Reflection is optional and uses a low budget with the same tag scope. It produce
 
 There is no startup seeding, automatic polling, or automatic retain retry. Read/write SDK calls use one attempt and bounded timeouts. The analysis route tolerates unavailable memory and returns an honest baseline-only result. Resolution errors return a safe 503 and leave an unconfirmed audit status. 401/403, 404, 402/429, timeouts, and generic failures get distinct safe messages. Raw provider responses and stack traces are not returned.
 
-Live verification is pending credentials. The offline adapter test uses real installed SDK response models, but it does not establish that the service will accept authentication or return relevant evidence. Run the explicit smoke test and inspect the UI before recording a live demo.
+On November 7, the owner reported successful local bank access, `1 passed` for the real retain/recall smoke test, and a working synthetic learning loop in the live dashboard. The reviewer independently reran offline checks without credentials; it did not reproduce those external calls. Hosted verification, restart persistence, and optional reflection remain pending explicit evidence. See validation.md. Before recording a fresh learning demo, use an unused service name and inspect the actual returned context rather than assuming the existing inventory scenario is unseen.

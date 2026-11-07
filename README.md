@@ -4,7 +4,9 @@
 
 ReTrace helps engineers investigate recurring incidents using verified historical outcomes. Its Failure Ledger keeps unsuccessful interventions alongside successful ones, so the next investigation can ask better questions with source evidence attached.
 
-**Current verification:** the React interface, FastAPI routes, local persistence, SDK response mapping, and offline grounding rules have been tested. Live Hindsight authentication, retain, recall, and reflect have **not** been verified in the build environment because no Hindsight key was available. Sample mode never makes Hindsight calls and is labeled throughout. This project is not submission-complete until the live checklist below passes.
+**Verification status — November 7, 2026:** review of commit `5235492` reproduced 25 backend test passes, 6 frontend test passes, 6/6 offline evaluation cases, a successful production build, and zero reported npm vulnerabilities including development dependencies. The project owner also reports a successful live Hindsight smoke test (`1 passed`), bank verification, and the dashboard's synthetic resolution → retain → recall → changed recommendation flow on Windows. Those credentialed local results are owner-reported; the reviewer did not receive API credentials. Hosted end-to-end testing, restart persistence, and optional reflection remain separate acceptance checks. Sample mode never makes Hindsight calls.
+
+Source: https://github.com/sankirthrbhat/ReTrace. See [validation details](docs/validation.md) for evidence scope and remaining checks.
 
 ## Run on Windows
 
@@ -13,8 +15,8 @@ Use your actual project directory. This build was created in a cloud Linux works
 From PowerShell in the project root:
 
 ```powershell
-py -3 -m venv backend\.venv
-backend\.venv\Scripts\python.exe -m pip install -r backend\requirements-dev.txt
+python -m venv .\backend\.venv
+.\backend\.venv\Scripts\python.exe -m pip install -r .\backend\requirements-dev.txt
 npm.cmd ci
 if (!(Test-Path backend\.env)) { Copy-Item backend\.env.example backend\.env }
 notepad backend\.env
@@ -33,8 +35,8 @@ The bank ID above comes from the supplied project brief. Verify it; the code nev
 Verify your bank, then seed three synthetic lessons explicitly:
 
 ```powershell
-backend\.venv\Scripts\python.exe scripts\memory_check.py verify
-backend\.venv\Scripts\python.exe scripts\memory_check.py seed --confirm-synthetic
+.\backend\.venv\Scripts\python.exe scripts\memory_check.py verify
+.\backend\.venv\Scripts\python.exe scripts\memory_check.py seed --confirm-synthetic
 ```
 
 Start both development servers from the project root:
@@ -67,16 +69,18 @@ npm run dev:full
 1. Choose **Connection pool exhaustion** and investigate.
 2. Open **Memory comparison**. The baseline inspects the current symptoms; the memory side cites a prior failed pod restart and a successful connection-budget correction.
 3. Open **Source evidence** to inspect the recorded incident, context, attempts, and verification flags.
-4. Choose **A new lesson to remember** and investigate. No matching seeded resolution should be available for `inventory-api`.
-5. Record a root cause and failed/successful interventions, verify only observed outcomes, and explicitly confirm the resolution.
-6. Investigate again. The new record should influence the evidence-backed steps.
+4. Choose **A new lesson to remember**. If it has already been taught, use **Edit incident** to change the service to an unused name such as `inventory-demo-002`. Investigate and inspect whether any applicable historical resolution exists for that exact service and environment.
+5. Record a synthetic root cause and failed/successful interventions, explicitly label the incident synthetic, and confirm the outcomes in that simulated scenario.
+6. Investigate the same input again. The new source should influence the evidence-backed steps. Use that exact service name again when checking persistence after a restart.
+
+Use a new unused service name for a fresh recording, rather than presenting an already-learned scenario as unseen. Related incidents from other services may still be retrieved; explain why their context is not promoted to an applicable intervention.
 
 In sample mode this is a browser-local illustration. For judging, complete the same steps in live mode and show the Hindsight dashboard / smoke-test output. A successful retain alone is not proof of later recall.
 
 ## How Hindsight is used
 
 - The official `hindsight-client==1.2.0` Python SDK performs asynchronous retain, recall, and optional reflect calls.
-- Before retention, the app reads the existing bank profile. It never calls bank creation APIs.
+- Before retention, the app reads the existing bank configuration with `banks.get_bank_config`. It never calls bank creation APIs. The retired profile endpoint returns HTTP 410 and is not used.
 - Confirmed resolutions are serialized as versioned JSON documents under stable `retrace-<incident_id>` document IDs and the `retrace` tag.
 - Recall requests use strict tag filtering and a low token budget. For up to four returned ReTrace document IDs, the source document is fetched and validated.
 - Only a confirmed, compatible source record may contribute structured failed-fix or successful-fix advice. Unmapped snippets remain evidence without intervention claims.
@@ -101,17 +105,17 @@ Interactive API docs are at `/docs`. Request and response schemas are defined in
 ## Tests and evaluation
 
 ```powershell
-backend\.venv\Scripts\python.exe -m pytest backend\tests -q
+.\backend\.venv\Scripts\python.exe -m pytest backend\tests -q
 npm.cmd test
 npm.cmd run build
-backend\.venv\Scripts\python.exe scripts\evaluate.py
+.\backend\.venv\Scripts\python.exe scripts\evaluate.py
 ```
 
 To opt into the real smoke test (uses credits and writes one stable synthetic document):
 
 ```powershell
 $env:RETRACE_LIVE_TESTS="1"
-backend\.venv\Scripts\python.exe -m pytest backend\tests\test_live.py -m live -s
+.\backend\.venv\Scripts\python.exe -m pytest backend\tests\test_live.py -m live -s
 Remove-Item Env:RETRACE_LIVE_TESTS
 ```
 

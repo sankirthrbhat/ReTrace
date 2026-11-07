@@ -15,13 +15,14 @@ Target from the supplied brief: Hack With Bangalore 4.0, November 7, 2026, 11:59
 
 ## Must complete before claiming a working live submission
 
-- [ ] Configure the real Hindsight key locally; verify the exact existing bank ID.
-- [ ] Run bank verification, actual retain, actual recall, and source-document extraction.
-- [ ] Verify new learning across separate requests and a backend restart.
+- [x] Configure the real Hindsight key locally; verify the exact existing bank ID. Owner-reported; connection screenshot supplied.
+- [x] Run bank verification, actual retain, actual recall, and source-document extraction. Owner reports the opt-in live smoke test returned `1 passed`.
+- [x] Verify new learning across separate requests. Owner reports the live dashboard resolution capture and subsequent changed recommendation worked.
+- [ ] Verify recall after a backend restart using the same incident input and exact service name.
 - [ ] Test optional reflect with real credentials if showing it in the demo.
-- [ ] Record actual integration results in validation.md, including failures and indexing delays.
+- [x] Record the available local results and their owner-reported provenance in validation.md. Add hosted results, timings, and failures when actually observed.
 - [ ] Complete one real Band AI task and save evidence.
-- [ ] Push clean source to the team's GitHub repository and confirm it is accessible to judges.
+- [x] Push clean source to the public repository: https://github.com/sankirthrbhat/ReTrace. Current tree inspected; private `.env`, databases, and temporary backup excluded.
 - [ ] Deploy and verify the full backend plus frontend. A static sample preview is insufficient proof of memory use.
 - [ ] Record and publish one public 2–5 minute team video on YouTube, at least 1080p, showing real retain/recall and the learning loop.
 - [ ] Complete the final submission form once per team, with the links actually tested.

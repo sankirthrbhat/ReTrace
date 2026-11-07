@@ -10,7 +10,7 @@ Hindsight retains and recalls agent memory. SQLite is only the structured local 
 No. The backend baseline function receives only current incident input. Tests assert that a memory-disabled investigation makes no recall or reflect call. The baseline is deterministic symptom triage, not a generative-model performance comparison.
 
 **How does new learning happen?**
-An engineer confirms a resolution and intervention outcomes. Retain stores a versioned source document. A subsequent recall returns its document reference; the adapter fetches the original source and checks its schema and context before using it. Live proof of this sequence remains a required verification step.
+An engineer confirms a resolution and intervention outcomes. Retain stores a versioned source document. A subsequent recall returns its document reference; the adapter fetches the original source and checks its schema and context before using it. The owner reports that the local smoke test passed and the dashboard learning loop worked. Hosted proof and restart persistence remain separate verification steps.
 
 **How do you prevent fabricated incident citations?**
 Structured intervention recommendations need a source record obtained from a document ID returned by recall. The source must validate as a confirmed ReTrace resolution and match its document ID. An unmapped snippet may be shown but cannot create a failed-fix claim.
@@ -25,7 +25,7 @@ Yes. The ledger says that an intervention failed in its recorded context. Servic
 Hindsight handles its own memory operations; optional `reflect` generates hypotheses with its configured model. Baseline and structured outcome selection are deterministic. No Codex subscription is assumed to grant a runtime API key.
 
 **What does the evaluation prove?**
-Offline tests verify API behavior, grounding, isolation, retries, and error handling. A six-case synthetic evaluation checks source compatibility and grounded outcome warnings. Neither establishes production downtime improvement or Hindsight retrieval relevance. The live smoke test is opt-in and must be run with credentials.
+Offline tests verify API behavior, grounding, isolation, retries, and error handling. A six-case synthetic evaluation checks source compatibility and grounded outcome warnings. Neither establishes production downtime improvement or Hindsight retrieval relevance. The owner reports one successful opt-in live smoke test. That establishes one integration case, not a retrieval benchmark; the reviewer did not receive credentials.
 
 **Is it production-ready?**
 No. The MVP needs tenant isolation, stronger authentication, durable shared storage, distributed rate limiting, retention controls, broader redaction, and observability before a production rollout.
